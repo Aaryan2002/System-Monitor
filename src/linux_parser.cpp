@@ -170,11 +170,11 @@ long LinuxParser::IdleJiffies() {
 // TODO: Read and return CPU utilization
 float LinuxParser::CpuUtilization(int pid) { 
   long seconds = LinuxParser::UpTime() - LinuxParser::UpTime(pid);
-  float cpuUtil = 100.0 * ( LinuxParser::ActiveJiffies(pid)/sysconf(_SC_CLK_TCK))/seconds;
+  float cpuUtil = ( LinuxParser::ActiveJiffies(pid)/sysconf(_SC_CLK_TCK))/seconds;
   return cpuUtil;
 }
 float LinuxParser::CpuUtilization(){
-float cpuUtil = 100.0 * LinuxParser::ActiveJiffies()/(LinuxParser::Jiffies());
+float cpuUtil = LinuxParser::ActiveJiffies()/(LinuxParser::Jiffies());
 return cpuUtil;
 }
 
