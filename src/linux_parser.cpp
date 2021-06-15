@@ -69,20 +69,20 @@ vector<int> LinuxParser::Pids() {
 // TODO: Read and return the system memory utilization
 float LinuxParser::MemoryUtilization() { 
   string line;
-  long MemTotal,MemFree;
+  float MemTotal,MemFree;
   string varName; 
-  long MemUsed = 0; //Represents the total memory used = MemTotal- MemFree
+  float MemUsed = 0; //Represents the total memory used = MemTotal- MemFree
   std::ifstream stream (kProcDirectory+kMeminfoFilename);
   if (stream.is_open()){
-    
     std::getline(stream,line);
     std::istringstream linestream(line);
     linestream>>varName>>MemTotal;
     std::getline(stream,line);
     std::istringstream linestream2(line);
-    linestream>>varName>>MemFree;
+    linestream2>>varName>>MemFree;
     MemUsed = MemTotal - MemFree;
     return (MemUsed/MemTotal); // returns percentage of used memory
+    
   }
   
   return 0.0; }
@@ -169,12 +169,11 @@ long LinuxParser::IdleJiffies() {
 
 // TODO: Read and return CPU utilization
 float LinuxParser::CpuUtilization(int pid) { 
-  long seconds = LinuxParser::UpTime() - LinuxParser::UpTime(pid);
-  float cpuUtil = ( LinuxParser::ActiveJiffies(pid)/sysconf(_SC_CLK_TCK))/seconds;
+  float cpuUtil =  ( (float)LinuxParser::ActiveJiffies(pid)/sysconf(_SC_CLK_TCK))/(float)LinuxParser::UpTime(pid);
   return cpuUtil;
 }
 float LinuxParser::CpuUtilization(){
-float cpuUtil = LinuxParser::ActiveJiffies()/(LinuxParser::Jiffies());
+float cpuUtil  = (float)LinuxParser::ActiveJiffies()/((float)LinuxParser::Jiffies());
 return cpuUtil;
 }
 
@@ -286,14 +285,15 @@ string LinuxParser::User(int pid){
 // REMOVE: [[maybe_unused]] once you define the function
 long LinuxParser::UpTime(int pid) {
   string line;
-  string uptime;
+  string startTime;
   std::ifstream stream(kProcDirectory+std::to_string(pid)+kStatFilename);
 if (stream.is_open()){
   std::getline(stream,line);
   std::istringstream linestream(line);
   for(int i =0;i<22;i++){
-    linestream>>uptime;
+    linestream>>startTime;
   }
-  return std::stol(uptime)/sysconf(_SC_CLK_TCK);
+  long uptime = LinuxParser::UpTime() - std::stol(startTime)/sysconf(_SC_CLK_TCK);
+  return uptime;
 }  
   return 0; }
