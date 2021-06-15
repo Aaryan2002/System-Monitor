@@ -82,7 +82,7 @@ float LinuxParser::MemoryUtilization() {
     std::istringstream linestream2(line);
     linestream>>varName>>MemFree;
     MemUsed = MemTotal - MemFree;
-    return ((MemUsed/MemTotal) * 100.0); // returns percentage of used memory
+    return (MemUsed/MemTotal); // returns percentage of used memory
   }
   
   return 0.0; }
